@@ -204,12 +204,22 @@ public class ConfigPath {
     public static final String GENERAL_ALESSIODP_PARTIES_RANK = GENERAL_PARTY_SETTINGS_PATH + ".alessioDP-choose-arena-rank";
 
     private static final String GENERAL_TNT_JUMP_PATH = "tnt-jump-settings";
+    public static final String GENERAL_TNT_JUMP_ENABLED = GENERAL_TNT_JUMP_PATH + ".enabled";
     public static final String GENERAL_TNT_JUMP_BARYCENTER_IN_Y = GENERAL_TNT_JUMP_PATH + ".barycenter-alteration-in-y";
     public static final String GENERAL_TNT_JUMP_STRENGTH_REDUCTION = GENERAL_TNT_JUMP_PATH + ".strength-reduction-constant";
     public static final String GENERAL_TNT_JUMP_Y_REDUCTION = GENERAL_TNT_JUMP_PATH + ".y-axis-reduction-constant";
     public static final String GENERAL_TNT_JUMP_DAMAGE_SELF = GENERAL_TNT_JUMP_PATH + ".damage-self";
     public static final String GENERAL_TNT_JUMP_DAMAGE_TEAMMATES = GENERAL_TNT_JUMP_PATH + ".damage-teammates";
     public static final String GENERAL_TNT_JUMP_DAMAGE_OTHERS = GENERAL_TNT_JUMP_PATH + ".damage-others";
+
+    public static final String GENERAL_TNT_BLAST_PROTECTION = "blast-protection";
+    public static final String GENERAL_TNT_PROTECTION_END_STONE_BLAST = GENERAL_TNT_BLAST_PROTECTION+".end-stone";
+    public static final String GENERAL_TNT_PROTECTION_GLASS_BLAST = GENERAL_TNT_BLAST_PROTECTION+".glass";
+    public static final String GENERAL_TNT_RAY_BLOCKED_BY_GLASS = GENERAL_TNT_BLAST_PROTECTION+".ray-blocked-by-glass";
+
+    public static final String GENERAL_TNT_PRIME = "tnt-prime-settings";
+    public static final String GENERAL_TNT_AUTO_IGNITE = GENERAL_TNT_PRIME+".auto-ignite";
+    public static final String GENERAL_TNT_FUSE_TICKS = GENERAL_TNT_PRIME+".fuse-ticks";
 
     private static final String GENERAL_FIREBALL_PATH = "fireball";
     public static final String GENERAL_FIREBALL_EXPLOSION_SIZE = GENERAL_FIREBALL_PATH + ".explosion-size";
@@ -232,8 +242,8 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_PERFORMANCE_PAPER_FEATURES = GENERAL_CONFIGURATION_PERFORMANCE_PATH + ".paper-features";
 
     private static final String GENERAL_CONFIGURATION_HEAL_POOL = GENERAL_CONFIGURATION_PERFORMANCE_PATH+".heal-pool";
-    public static final String GENERAL_CONFIGURATION_HEAL_POOL_ENABLE = GENERAL_CONFIGURATION_HEAL_POOL+".enable";
-    public static final String GENERAL_CONFIGURATION_HEAL_POOL_SEEN_TEAM_ONLY = GENERAL_CONFIGURATION_HEAL_POOL_ENABLE+".seen-by-team-only";
+    public static final String GENERAL_CONFIGURATION_HEAL_POOL_ENABLE = GENERAL_CONFIGURATION_HEAL_POOL +".enable";
+    public static final String GENERAL_CONFIGURATION_HEAL_POOL_SEEN_TEAM_ONLY = GENERAL_CONFIGURATION_HEAL_POOL+".seen-by-team-only";
     public static final String SHOP_SETTINGS_PATH = "shop-settings";
     public static final String SHOP_SPECIALS_PATH = "shop-specials";
     public static final String SHOP_QUICK_DEFAULTS_PATH = "quick-buy-defaults";

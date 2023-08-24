@@ -66,6 +66,8 @@ import static com.andrei1058.bedwars.arena.LastHit.getLastHit;
 
 public class DamageDeathMove implements Listener {
 
+    private final boolean tntJumpenabled;
+
     private final double tntJumpBarycenterAlterationInY;
     private final double tntJumpStrengthReductionConstant;
     private final double tntJumpYAxisReductionConstant;
@@ -74,6 +76,7 @@ public class DamageDeathMove implements Listener {
     private final double tntDamageOthers;
 
     public DamageDeathMove() {
+        this.tntJumpenabled = config.getYml().getBoolean(ConfigPath.GENERAL_TNT_JUMP_ENABLED);
         this.tntJumpBarycenterAlterationInY = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_BARYCENTER_IN_Y);
         this.tntJumpStrengthReductionConstant = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_STRENGTH_REDUCTION);
         this.tntJumpYAxisReductionConstant = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_Y_REDUCTION);
@@ -81,6 +84,7 @@ public class DamageDeathMove implements Listener {
         this.tntDamageTeammates = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_TEAMMATES);
         this.tntDamageOthers = config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_OTHERS);
     }
+
 
     @EventHandler
     public void onDamage(EntityDamageEvent e) {
@@ -101,11 +105,6 @@ public class DamageDeathMove implements Listener {
                     return;
                 }
 
-                // todo why did I set this to 1? disabled for now
-                /*if (e.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) {
-                    e.setDamage(1);
-                    return;
-                }*/
                 //if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
                 if (BedWarsTeam.reSpawnInvulnerability.containsKey(p.getUniqueId())) {
                     if (BedWarsTeam.reSpawnInvulnerability.get(p.getUniqueId()) > System.currentTimeMillis()) {
@@ -183,36 +182,38 @@ public class DamageDeathMove implements Listener {
                         return;
                     }
                 } else if (e.getDamager() instanceof TNTPrimed) {
-                    TNTPrimed tnt = (TNTPrimed) e.getDamager();
-                    if (tnt.getSource() != null) {
-                        if (tnt.getSource() instanceof Player) {
-                            damager = (Player) tnt.getSource();
-                            if (damager.equals(p)) {
-                                if (tntDamageSelf > -1) {
-                                    e.setDamage(tntDamageSelf);
-                                }
-                                // tnt jump. credits to feargames.it
-                                LivingEntity damaged = (LivingEntity) e.getEntity();
-                                Vector distance = damaged.getLocation().subtract(0, tntJumpBarycenterAlterationInY, 0).toVector().subtract(tnt.getLocation().toVector());
-                                Vector direction = distance.clone().normalize();
-                                double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + distance.length()));
-                                Vector resultingForce = direction.clone().multiply(force);
-                                resultingForce.setY(resultingForce.getY() / (distance.length() + tntJumpYAxisReductionConstant));
-                                damaged.setVelocity(resultingForce);
-                            } else {
-                                ITeam currentTeam = a.getTeam(p);
-                                ITeam damagerTeam = a.getTeam(damager);
-                                if (currentTeam.equals(damagerTeam)) {
-                                    if (tntDamageTeammates > -1) {
-                                        e.setDamage(tntDamageTeammates);
+                    if(tntJumpenabled) {
+                        TNTPrimed tnt = (TNTPrimed) e.getDamager();
+                        if (tnt.getSource() != null) {
+                            if (tnt.getSource() instanceof Player) {
+                                damager = (Player) tnt.getSource();
+                                if (damager.equals(p)) {
+                                    if (tntDamageSelf > -1) {
+                                        e.setDamage(tntDamageSelf);
                                     }
+                                    // tnt jump. credits to feargames.it
+                                    LivingEntity damaged = (LivingEntity) e.getEntity();
+                                    Vector distance = damaged.getLocation().subtract(0, tntJumpBarycenterAlterationInY, 0).toVector().subtract(tnt.getLocation().toVector());
+                                    Vector direction = distance.clone().normalize();
+                                    double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + distance.length()));
+                                    Vector resultingForce = direction.clone().multiply(force);
+                                    resultingForce.setY(resultingForce.getY() / (distance.length() + tntJumpYAxisReductionConstant));
+                                    damaged.setVelocity(resultingForce);
                                 } else {
-                                    if (tntDamageOthers > -1) {
-                                        e.setDamage(tntDamageOthers);
+                                    ITeam currentTeam = a.getTeam(p);
+                                    ITeam damagerTeam = a.getTeam(damager);
+                                    if (currentTeam.equals(damagerTeam)) {
+                                        if (tntDamageTeammates > -1) {
+                                            e.setDamage(tntDamageTeammates);
+                                        }
+                                    } else {
+                                        if (tntDamageOthers > -1) {
+                                            e.setDamage(tntDamageOthers);
+                                        }
                                     }
                                 }
-                            }
-                        } else return;
+                            } else return;
+                        }
                     }
                 } else if ((e.getDamager() instanceof Silverfish) || (e.getDamager() instanceof IronGolem)) {
                     LastHit lh = LastHit.getLastHit(p);
@@ -296,27 +297,7 @@ public class DamageDeathMove implements Listener {
                     e.setCancelled(true);
                 }
             }
-        } /*else if (e.getEntity() instanceof IronGolem) {
-            Player damager;
-            if (e.getDamager() instanceof Player) {
-                damager = (Player) e.getDamager();
-            } else if (e.getDamager() instanceof Projectile) {
-                Projectile proj = (Projectile) e.getDamager();
-                damager = (Player) proj.getShooter();
-            } else {
-                return;
-            }
-            Arena a = Arena.getArenaByPlayer(damager);
-            if (a != null) {
-                if (a.isPlayer(damager)) {
-                    if (nms.isDespawnable(e.getEntity())) {
-                        if (a.getTeam(damager) == ((OwnedByTeam) nms.getDespawnablesList().get(e.getEntity().getUniqueId())).getOwner()) {
-                            e.setCancelled(true);
-                        }
-                    }
-                }
-            }
-        }*/
+        }
         if (BedWars.getServerType() == ServerType.MULTIARENA) {
             if (e.getEntity().getLocation().getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
                 e.setCancelled(true);
